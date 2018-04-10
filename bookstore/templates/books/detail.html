@@ -1,9 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
-{% block title %}尚硅谷书城-商品详情{% endblock title %}
-
-{# 网页顶部引入文件块 #}
+{% block title %}尚硅谷书店-商品详情{% endblock title %}
 {% block topfiles %}
 <script>
 $(function () {
@@ -64,18 +61,7 @@ $(function () {
 })
 </script>
 {% endblock topfiles %}
-
-{# 网页顶部欢迎信息块 #}
-{#{% block header_con %}#}
-{#{% endblock header_con %}#}
-{# 网页顶部搜索框块 #}
-{#{% block search_bar %}#}
-{#{% endblock search_bar %}#}
-
-
-{# 网页主体内容块 #}
 {% block body %}
-
 	<div class="navbar_con">
 		<div class="navbar clearfix">
 			<div class="subnav_con fl">
@@ -131,20 +117,18 @@ $(function () {
                 {% csrf_token %}
 				<a href="javascript:;" class="buy_btn">立即购买</a>
 				<a href="javascript:;" books_id="{{ books.id }}" class="add_cart" id="add_cart">加入购物车</a>
-                <a href="#" id="write-comment" class="comment">我要写评论</a>
+				<a href="#" id="write-comment" class="comment">我要写评论</a>
 			</div>
-
-            <div style="display:flex;" id="comment-input" data-bookid="{{ books.id }}" data-userid="{{ request.session.passport_id }}">
-                <div>
-                    <input type="text" placeholder="评论内容">
-                </div>
-                <div id="submit-comment">
-                    <button>
-                        提交评论
-                    </button>
-                </div>
-            </div>
-
+			<div style="display:flex;" id="comment-input" data-bookid="{{ books.id }}" data-userid="{{ request.session.passport_id }}">
+			  <div>
+			    <input type="text" placeholder="评论内容">
+			  </div>
+			  <div id="submit-comment">
+			    <button>
+			      提交评论
+			    </button>
+			  </div>
+			</div>
 		</div>
 	</div>
 
@@ -153,14 +137,13 @@ $(function () {
 			<div class="new_book">
 				<h3>新品推荐</h3>
 				<ul>
-
                     {% for book in books_li %}
 					<li>
-						<a href="#"><img src="{% static books.image %}"></a>
-						<h4><a href="#">{{ book.name }}</a></h4>
+						<a href="{% url 'books:detail' books_id=books.id %}"><img src="{% static book.image %}"></a>
+						<h4><a href="{% url 'books:detail' books_id=books.id %}">{{ book.name }}</a></h4>
 						<div class="prize">￥{{ book.price }}</div>
 					</li>
-                    {% endfor %}
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
@@ -176,37 +159,33 @@ $(function () {
 					<dt>商品详情：</dt>
 					<dd>{{ books.detail | safe }}</dd>
 				</dl>
-                <dl id="book_comment">
-                </dl>
+				<dl id="book_comment">
+				</dl>
 			</div>
 
 		</div>
 	</div>
-
-    	<div class="add_jump"></div>
+	<div class="add_jump"></div>
 {% endblock body %}
-
-{# 网页底部html元素块 #}
-{% block bottom %}{% endblock bottom %}
-
-{# 网页底部引入文件块 #}
 {% block bottomfiles %}
 <script type="text/javascript">
-    var $add_x = $('#add_cart').offset().top;
-    var $add_y = $('#add_cart').offset().left;
+	var $add_x = $('#add_cart').offset().top;
+	var $add_y = $('#add_cart').offset().left;
 
-    var $to_x = $('#show_count').offset().top;
-    var $to_y = $('#show_count').offset().left;
+	var $to_x = $('#show_count').offset().top;
+	var $to_y = $('#show_count').offset().left;
 
-    $('#add_cart').click(function(){
+	$('#comment-input').hide()
+
+	$('#add_cart').click(function(){
         // 获取商品的id和商品数量
         books_id = $(this).attr('books_id')
         books_count = $('.num_show').val()
         csrf = $('input[name="csrfmiddlewaretoken"]').val()
         // 发起请求，访问/cart/add/, 进行购物车数据的添加
         params = {
-            'books_id': books_id,
-            'books_count': books_count,
+        	'books_id': books_id,
+        	'books_count': books_count,
             'csrfmiddlewaretoken': csrf
         }
 
@@ -217,7 +196,7 @@ $(function () {
                 $(".add_jump").stop().animate({
                     'left': $to_y+7,
                     'top': $to_x+7},
-                    3000, function() {
+                    "fast", function() {
                         $(".add_jump").fadeOut('fast',function(){
                             // 获取原有show_count的值
                             count = $('#show_count').html()
@@ -231,87 +210,83 @@ $(function () {
                 alert(data.errmsg)
             }
         })
-    })
+	})
 
-    // 获取评论
-    $.ajax({
-        url: '/comment/comment/' + $('#comment-input').data('bookid'),
-        success: function (res) {
-            if (res.code === 200) {
-                var data = res.data;
-                console.log(data);
-                var div_head = '<div>';
-                var div_tail = '</div>';
-                var dom_element = ''
-                for(i = 0; i < data.length; i++) {
-                    var head = '<div>';
-                    var tail = '</div>';
-                    var temp = head + '<span>' + data[i].user_id + '</span>' + '<br>' + '<span>' + data[i].content + '</span>' + tail;
-                    dom_element += temp;
-                }
-                dom_element = div_head + dom_element + div_tail;
-                $('#book_comment').append(dom_element);
-            }
-        }
-    })
+	// 获取评论
+	$.ajax({
+		url: '/comment/comment/' + $('#comment-input').data('bookid'),
+		success: function (res) {
+			if (res.code === 200) {
+				var data = res.data;
+				console.log(data);
+				var div_head = '<div>';
+				var div_tail = '</div>';
+				var dom_element = ''
+				for(i = 0; i < data.length; i++) {
+					var head = '<div>';
+					var tail = '</div>';
+					var temp = head + '<span>' + data[i].user_id + '</span>' + '<br>' + '<span>' + data[i].content + '</span>';
+					dom_element += temp;
+				}
+				dom_element = div_head + dom_element + div_tail;
+				$('#book_comment').append(dom_element);
+			}
+		}
+	})
 
-    $('#detail').click(function () {
-        $(this).addClass('active');
-        $('#comment').removeClass('active');
-        $('#book_comment').hide();
-        $('#book_detail').show();
-    })
-    $('#comment').click(function () {
-        $(this).addClass('active');
-        $('#detail').removeClass('active');
-        $('#book_comment').show();
-        $('#book_detail').hide();
-    })
-    $('#write-comment').click(function () {
-        $('#comment-input').show();
-    })
-    $('#submit-comment').click(function () {
-        var book_id = $('#comment-input').data('bookid');
-        var user_id = $('#comment-input').data('userid');
-        var content = $('#comment-input input').val();
-        var data = {
-            book_id: book_id,
-            user_id: user_id,
-            content: content,
-        }
-        console.log('content: ', content);
-        $.ajax({
-            type: 'POST',
-            url: '/comment/comment/' + book_id + '/',
-            data: JSON.stringify(data),
-            success: function (res) {
-                if (res.code === 200) {
-                    // console.log('res: ', res)
-                    $('#comment-input').hide();
-                }
-            }
-        })
-    })
-
+	$('#detail').click(function () {
+		$(this).addClass('active');
+		$('#comment').removeClass('active');
+		$('#book_comment').hide();
+		$('#book_detail').show();
+	})
+	$('#comment').click(function () {
+		$(this).addClass('active');
+		$('#detail').removeClass('active');
+		$('#book_comment').show();
+		$('#book_detail').hide();
+	})
+	$('#write-comment').click(function () {
+		$('#comment-input').show();
+	})
+	$('#submit-comment').click(function () {
+		var book_id = $('#comment-input').data('bookid');
+		var user_id = $('#comment-input').data('userid');
+		var content = $('#comment-input input').val();
+		var data = {
+			book_id: book_id,
+			user_id: user_id,
+			content: content,
+		}
+		console.log('content: ', content);
+		$.ajax({
+			type: 'POST',
+			url: '/comment/comment/' + book_id + '/',
+			data: JSON.stringify(data),
+			success: function (res) {
+				if (res.code === 200) {
+					// console.log('res: ', res)
+					$('#comment-input').hide();
+				}
+			}
+		})
+	})
 </script>
-
-
 
 <style type="text/css">
 .comment {
-    background-color: #c40000;
-    color: #fff;
-    margin-left: 10px;
-    position: relative;
-    z-index: 10;
-    display: inline-block;
-    width: 178px;
-    height: 38px;
-    border: 1px solid #c40000;
-    font-size: 14px;
-    line-height: 38px;
-    text-align: center;
+	background-color: #c40000;
+	color: #fff;
+	margin-left: 10px;
+	position: relative;
+	z-index: 10;
+	display: inline-block;
+	width: 178px;
+	height: 38px;
+	border: 1px solid #c40000;
+	font-size: 14px;
+	line-height: 38px;
+	text-align: center;
 }
 </style>
-
 {% endblock bottomfiles %}

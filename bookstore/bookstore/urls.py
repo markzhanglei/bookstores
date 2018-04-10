@@ -26,6 +26,9 @@ urlpatterns = [
 
     url(r'^order/',include('order.urls',namespace='order')),  #支付
 
-    url(r'^comment/',include('comments.urls',namespace='comment'))  # 评论模块
+    url(r'^comment/',include('comments.urls',namespace='comment')),  # 评论模块
+
+    url(r'^search/',include('haystack.urls'))
+    
 
 ]
