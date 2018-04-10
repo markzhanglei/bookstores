@@ -18,12 +18,14 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^users/',include('users.urls',namespace='users')),
-    url(r'^tinymce/',include('tinymce.urls')),
-    url(r'^',include('books.urls',namespace='books')),
+    url(r'^users/',include('users.urls',namespace='users')),  #用户
+    url(r'^tinymce/',include('tinymce.urls')), #富文本编辑器
+    url(r'^',include('books.urls',namespace='books')), #书籍
 
-    url(r'^cart/',include('cart.urls',namespace='cart')),
+    url(r'^cart/',include('cart.urls',namespace='cart')), #购物车
 
-    url(r'^order/',include('order.urls',namespace='order'))
+    url(r'^order/',include('order.urls',namespace='order')),  #支付
+
+    url(r'^comment/',include('comments.urls',namespace='comment'))  # 评论模块
 
 ]

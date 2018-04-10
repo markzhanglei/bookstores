@@ -13,11 +13,13 @@ $(function () {
         password = $('#pwd').val()
         csrf = $('input[name="csrfmiddlewaretoken"]').val()
         remember = $('input[name="remember"]').prop('checked')
+        vc = $('input[name="vc"]').val()
         params = {
             'username':username,
             'password':password,
             'csrfmiddlewaretoken':csrf,
-            'remember':remember
+            'remember':remember,
+            'verifycode':vc,
         }
         $.post('/users/login_check/',params,function (data) {
              // 用户名密码错误 {'res': 0}
@@ -68,6 +70,11 @@ $(function () {
 							<a href="#">忘记密码</a>
 						</div>
 						<input type="button" id="btnLogin" value="登录" class="input_submit">
+{#验证码的出现位置#}
+                    <div style="top: 100px; position: absolute;">
+                        <input type="text" id="vc" name="vc">
+                        <img id="verifycode" src="/users/verifycode" alt="CheckCode"/>
+                    </div>
 {#					</form>#}
 				</div>
 			</div>
