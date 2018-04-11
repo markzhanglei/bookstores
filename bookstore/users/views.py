@@ -12,7 +12,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from users.tasks import send_active_email
 from django.http import HttpResponse
-
+from django_redis import get_redis_connection
+from books.models import Books
 
 def register(request):
 	return render(request, 'users/register.html')
@@ -53,6 +54,25 @@ def register_handle(request):
 	# 注册完，还是返回注册页。
 	# 	return redirect(reverse('users:register'))
 	return redirect(reverse('books:index'))
+
+
+def register_active(request,token):
+	#用户账户激活
+	serializer = Serializer(settings.SECRET_KEY,3600)
+	try:
+		info = serializer.loads(token)
+		passport_id = info['confirm']
+		#进行用户激活
+		passport = Passport.objects.get(id=passport_id)
+		passport.is_active = True
+		passport.save()
+		#跳转的登录页
+		return redirect(reverse('users:login'))
+	except SignatureExpired:
+		#链接过期
+		return HttpResponse('激活链接已过期')
+
+
 
 
 def login(request):
@@ -120,7 +140,21 @@ def user(request):
 	# 获取用户的基本信息
 	addr = Address.objects.get_default_address(passport_id=passport_id)
 
+	#获取用户的最近浏览信息
+	con = get_redis_connection('default')
+	key = 'history_%d' % passport_id
+	#取出用户最近浏览的5个商品的id
+	history_li = con.lrange(key,0,4)
+	# history_li = [21,20,11]
+	# print(history_li)
+	# 查询数据库,获取用户最近浏览的商品信息
+	# books_li = Books.objects.filter(id__in=history_li)
 	books_li = []
+
+	for id in history_li:
+		books = Books.objects.get_books_by_id(books_id=id)
+		books_li.append(books)
+
 
 	context = {
 		'addr': addr,

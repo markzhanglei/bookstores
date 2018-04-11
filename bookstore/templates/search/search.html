@@ -32,12 +32,12 @@
                 <a href="/search/?q={{ query }}&page={{ page.previous_page_number }}"><上一页</a>
             {% endif %}
             {% for pindex in paginator.page_range %}
-            {% if pindex == page.number %}
+                {% if pindex == page.number %}
                 <a href="/search/?q={{ query }}&page={{ pindex }}" class="active">{{ pindex }}</a>
-            {% else %}
+                {% else %}
                 <a href="/search/?q={{ query }}&page={{ pindex }}">{{ pindex }}</a>
 
-            {% endif %}
+                {% endif %}
             {% endfor %}
             {% if page.has_next %}
                 <a href="/search/?q={{ query }}&page={{ page.next_page_number }}">下一页></a>

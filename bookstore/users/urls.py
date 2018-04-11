@@ -23,7 +23,6 @@ urlpatterns = [
 	url(r'^verifycode/$',views.verifycode,name='verifycode'),
 	#验证码功能
 
-
-
+	url(r'^active/(?P<token>.*)/$', views.register_active, name='active'),  # 用户激活
 
 ]

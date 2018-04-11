@@ -4,6 +4,8 @@ from books.enums import *
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 # Create your views here.
+from django_redis import get_redis_connection
+
 
 
 def index(request):
@@ -50,6 +52,18 @@ def detail(request,books_id):
 		return redirect(reverse('books:index'))
 # 新品推荐
 	books_li = Books.objects.get_books_by_type(type_id=books.type_id,limit=2,sort='new')
+
+	#用户登录之后,才记录浏览记录
+	#每个用户浏览记录对应redis中的一条信息 格式:history_用户id':[10,9,2,3,4]
+	#[9, 10, 2, 3, 4]
+	if request.session.has_key('islogin'):
+		#用户已登录,记录浏览记录
+		con = get_redis_connection('default')
+		key = 'history_%d' % request.session.get('passport_id')
+		con.lrem(key,0,books.id)
+		con.lpush(key,books.id)
+		#保存用户最近浏览的5个商品
+		con.ltrim(key,0,4)
 
 # 定义上下文
 	context = {
