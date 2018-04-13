@@ -68,7 +68,8 @@
 	</div>
 
 	<div class="order_submit clearfix">
-		<a href="javascript:;" id="order_btn">提交订单</a>
+		<a href="javascript:;" id="order_btn" books_ids={{ books_ids }}>提交订单</a>
+    {% csrf_token %}
 	</div>
 {% endblock body %}
 
@@ -103,7 +104,7 @@
                     $('.popup_con').fadeIn('fast',function () {
                         setTimeout(function () {
                             $('.popup_con').fadeOut('fast',function () {
-                                window.location.href = '/user/order';
+                                window.location.href = '/users/order/';
                             });
                         },3000)
 

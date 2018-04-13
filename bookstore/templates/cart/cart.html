@@ -265,6 +265,7 @@
 	</ul>
 {#    表单提交    #}
     <form action="/order/place/" method="post">
+    {% csrf_token %}
     {% for book in books_li %}
 	<ul class="cart_list_td clearfix">
 		<li class="col01"><input type="checkbox" name="books_ids" value="{{ book.id }}" checked></li>
@@ -285,7 +286,6 @@
     {% endfor %}
 
 	<ul class="settlements">
-        {% csrf_token %}
 		<li class="col01"><input type="checkbox" name="" checked=""></li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em>{{ total_price }}</em><br>共计<b>{{ total_count }}</b>件商品</li>
