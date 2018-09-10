@@ -1,4 +1,5 @@
 bookstore
+
 项目描述
 本项目主要使用的数据库有mysql,redis
 mysql是数据的存放位置，比较安全。
